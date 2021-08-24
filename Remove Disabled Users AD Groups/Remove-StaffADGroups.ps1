@@ -5,6 +5,7 @@
         Filename:   Remove-StaffADGroups.ps1
         Author:     Jacob Kidd
         Created:    8/6/2021
+        8/24/2021: Changed if statement to not remove group memberships from accounts with no memberships.
 
         Change the Searchbase variable in the script to the OU you want to search for.
 
@@ -64,7 +65,7 @@ Begin {
 Process {
     $DisabledStaff = Get-ADUser -Filter "Enabled -eq '$false'" -SearchBase $SearchBase -Properties MemberOf
     foreach ($Staff in $DisabledStaff) {
-        if ($Staff.SamAccountName -notin $Exceptions){
+        if (($Staff.SamAccountName -notin $Exceptions) -and ($null -ne $Staff.MemberOf)){
             try {
                 $Staff.MemberOf | Remove-ADGroupMember -Members $Staff.DistinguishedName -Confirm:$false -ErrorAction Stop
                 Write-Log -Path $LogFilePath -Message "User $($Staff.SamAccountName) had it's group memberships removed successfully." -Component $MyInvocation.MyCommand.Name -Type Info
