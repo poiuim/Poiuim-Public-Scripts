@@ -60,7 +60,7 @@ Begin {
     }
     $LogLife = 180
     $LogFilePath = Join-Path $PSScriptRoot "$(Get-Date -Format yyyy-MM-dd) GroupRemoval.log"
-    $Exceptions = "resauser", "costafftemplate"
+    $Exceptions = "user1", "user2"
 }
 Process {
     $DisabledStaff = Get-ADUser -Filter "Enabled -eq '$false'" -SearchBase $SearchBase -Properties MemberOf
